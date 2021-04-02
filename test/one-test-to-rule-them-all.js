@@ -288,7 +288,7 @@ describe("MultiSigWallet", function() {
       ).to.not.be.reverted;
 
       await expect(
-        multiSigWallet.connect(owner0).executeTransaction(0)
+        multiSigWallet.connect(other1).executeTransaction(0)
       ).to.not.be.reverted;
     })
   });
