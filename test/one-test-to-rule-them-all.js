@@ -270,7 +270,7 @@ describe("MultiSigWallet", function() {
         to: multiSigWallet.address,
         value: ethers.utils.parseEther("1.2")
       })).to.not.be.reverted;
-  
+
       await expect(
         multiSigWallet.connect(owner0).submitTransaction(receiveEther.address, 1, [])
       ).to.not.be.reverted;
@@ -288,8 +288,24 @@ describe("MultiSigWallet", function() {
       ).to.not.be.reverted;
 
       await expect(
-        multiSigWallet.connect(other1).executeTransaction(0)
+        multiSigWallet.connect(owner1).executeTransaction(0)
       ).to.not.be.reverted;
     })
+  });
+});
+
+describe("ERC721", function() {
+  it("Should mint and send tokens", async function() {
+    const [owner] = await ethers.getSigners();
+
+    const Fungie = await ethers.getContractFactory("Fungie");
+    const fungie = await Fungie.deploy();
+    await fungie.deployed();
+    const tx = await fungie.mintNFT(owner.address);
+    const result = await tx.wait();
+
+    const [from, to, tokenId] = result.events[0].args;
+    expect(await fungie.ownerOf(tokenId)).to.be.eq(to);
+    expect(to).to.be.eq(owner.address);
   });
 });
